@@ -41,7 +41,7 @@ For the following analyses we will require the use of a number of different R pa
 setwd("../data")
 
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load("cowplot", "flextable", "ggrepel", "ggspatial", "lubridate", "officer", "paletteer", "patchwork", "rgdal", "rnaturalearth", "sf", "tidyverse", "gdata", "rgeos", "ggpubr")
+pacman::p_load("cowplot", "flextable", "ggrepel", "ggspatial", "lubridate", "officer", "paletteer", "patchwork", "rgdal", "rnaturalearth", "sf", "tidyverse", "gdata", "rgeos", "ggpubr", "readxl")
 pacman::p_load_gh("eliocamp/ggnewscale")
 pacman::p_load_gh("ropensci/rnaturalearthhires")
 ```
@@ -52,9 +52,11 @@ pacman::p_load_gh("ropensci/rnaturalearthhires")
 <br>
 
 ```{r, map data}
-sites = read.xls("../data/outplantMetadata.xlsx", header =T)
+sites = read_excel("../data/outplantMetadata.xlsx")
 sites$General_Location <- as.factor(sites$General_Location)
 sites$Site_ID <- as.factor(sites$Site_ID)
+sites$Lat_Y <- as.numeric(sites$Lat_Y)
+sites$Long_X <- as.numeric(sites$Long_X)
 
 
 fknmsBounds <- read_sf("../data/shp/FKNMS_Boundary/FKNMS_Boundary.shp") %>% st_transform(crs = 4326)
@@ -94,8 +96,8 @@ mainKeys <- ggplot() +
   geom_sf(data = flKeys$geometry, fill = "white", color = "gray30") +
     geom_sf(data = fknmsBounds, fill = "black", alpha = 0.1) +
   geom_sf(data = bathy$geometry, color = "gray75", size = 0.25) +
-  coord_sf(xlim = c(-82.1688, -80.9603), ylim = c(24.3395,  24.8191)) +
-  geom_point(data = sites, aes(x = Long_X, y = Lat_Y, fill = Site_ID), size = 5) +
+  coord_sf(xlim = c(-81.994327, -81.284336), ylim = c(24.399133,  24.701425)) +
+  geom_point(data = sites, aes(x = Long_X, y = Lat_Y), shape = 21, color = "black", fill = "#FB6467FF",size = 2) +
   # geom_segment(aes(x = -81.509995, y = 24.515, xend = -81.685, yend = 24.427), size = 0.25) +
   # geom_segment(aes(x = -81.420055, y = 24.515, xend = -81.3255, yend = 24.427), size = 0.25) +
   # geom_rect(aes(xmin = -81.509995, xmax = -81.420055, ymin =24.515, ymax =24.557089), color = paletteer_d("vapoRwave::vapoRwave")[6], fill = NA, size = 1) +
@@ -103,8 +105,8 @@ mainKeys <- ggplot() +
   annotation_north_arrow(location = "br", which_north = "true", style = north_arrow_minimal()) +
   #guides(fill = guide_legend(override.aes = list(shape = 22, color = NA, size = 4), ncol = 2, order = 1), shape = guide_legend(override.aes = list(size = 3), order = 2), color = guide_legend(override.aes = list(fill = "black", alpha = 0.1), order = 3)) +
   #guides(fill = guide_legend(colour = guide_legend(override.aes = list(shape = NA))) +
-  # scale_x_continuous(breaks = c(seq(-82, -80, by = .2))) +
-  # scale_y_continuous(breaks = c(seq(24, 25, by = .2))) +
+  scale_x_continuous(breaks = c(seq(-82, -80, by = .2))) +
+  scale_y_continuous(breaks = c(seq(24, 25, by = .2))) +
 theme_bw() +
   theme(panel.background = element_rect(fill = "aliceblue"),
         panel.border = element_rect(color = "black", size = 0.75, fill = NA),
@@ -118,36 +120,14 @@ theme_bw() +
         legend.title = element_blank())+
   rremove('legend')
   
-noaaSites <- ggplot() +
-  geom_sf(data = flKeys$geometry, fill = "white", color = "gray30") +
-    geom_sf(data = fknmsBounds, fill = "black", alpha = 0.2) +
-  geom_sf(data = bathy$geometry, color = "grey30", size = 0.25) +
-  geom_point(data = sites, aes(x = Long_X, y = Lat_Y, fill = Site_ID, shape = 0, color = Site_ID), size = 2, alpha = 1) +
-  scale_fill_manual(values = c("#5A6F80FF", "#278B9AFF", "#E75B64FF", "#DE7862FF", "#D8AF39FF", "#E8C4A2FF"), name = "Site", labels = c("Z1", "Z2", "C1", "C2", "U1", "U2")) +
-  scale_color_manual(values = c("black", "black", "black", "black", "black", "black"), name = NULL, label = NULL) +
-  scale_shape_manual(values = c(21,22,23), name = NULL, labels = NULL) +
-  guides(fill = guide_legend(override.aes = list(shape = 22, color = NA, size = 4), ncol = 2, order = 1), shape = guide_legend(override.aes = list(size = 3), order = 2), color = guide_legend(override.aes = list(fill = "black", alpha = 0.1), order = 3)) +
-  coord_sf(xlim = c(-81.509995, -81.438055), ylim = c(24.525567,  24.545)) +
-  annotation_scale(location = "br") +
-  theme_bw() +
-  theme(legend.title = element_text(size = 9, face = "bold"),
-        axis.ticks = element_blank(),
-        axis.text = element_blank(),
-        axis.title = element_blank(),
-        panel.background = element_rect(fill = "aliceblue"),
-        panel.border = element_rect(color = "black", size = 0.75, fill = NA),
-        legend.text = element_text(size = 9),
-        legend.position = "none",
-        plot.background = element_blank())
 
-fknmsMap = ggdraw() +
+outplantMap = ggdraw() +
   draw_plot(mainKeys) +
-  draw_plot(floridaMap, x = .75, y = 0.7, width = 0.25, height = 0.25) +
-  draw_plot(noaaSites, x =.28, y = .22, width = 0.4, height = 0.4)
+  draw_plot(floridaMap, x = .07, y = .5, width = 0.25, height = 0.25) 
   
-ggsave("../figures/figure1.png", plot = fknmsMap, width = 16, height = 16, units = "cm", dpi = 600)
+ggsave("../figures/figure1.png", plot = outplantMap, width = 16, height = 16, units = "cm", dpi = 600)
 
-ggsave("../figures/figure1.eps", plot = fknmsMap, width = 16, height = 16, units = "cm", dpi = 600)
+ggsave("../figures/figure1.eps", plot = outplantMap, width = 16, height = 16, units = "cm", dpi = 600)
 
 
 
