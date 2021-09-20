@@ -94,17 +94,12 @@ floridaMap = ggplot() +
 
 mainKeys <- ggplot() +
   geom_sf(data = flKeys$geometry, fill = "white", color = "gray30") +
-    geom_sf(data = fknmsBounds, fill = "black", alpha = 0.1) +
+  geom_sf(data = fknmsBounds, fill = "black", alpha = 0.1) +
   geom_sf(data = bathy$geometry, color = "gray75", size = 0.25) +
   coord_sf(xlim = c(-81.994327, -81.284336), ylim = c(24.399133,  24.701425)) +
   geom_point(data = sites, aes(x = Long_X, y = Lat_Y), shape = 21, color = "black", fill = "#FB6467FF",size = 2) +
-  # geom_segment(aes(x = -81.509995, y = 24.515, xend = -81.685, yend = 24.427), size = 0.25) +
-  # geom_segment(aes(x = -81.420055, y = 24.515, xend = -81.3255, yend = 24.427), size = 0.25) +
-  # geom_rect(aes(xmin = -81.509995, xmax = -81.420055, ymin =24.515, ymax =24.557089), color = paletteer_d("vapoRwave::vapoRwave")[6], fill = NA, size = 1) +
   annotation_scale(location = "bl") +
   annotation_north_arrow(location = "br", which_north = "true", style = north_arrow_minimal()) +
-  #guides(fill = guide_legend(override.aes = list(shape = 22, color = NA, size = 4), ncol = 2, order = 1), shape = guide_legend(override.aes = list(size = 3), order = 2), color = guide_legend(override.aes = list(fill = "black", alpha = 0.1), order = 3)) +
-  #guides(fill = guide_legend(colour = guide_legend(override.aes = list(shape = NA))) +
   scale_x_continuous(breaks = c(seq(-82, -80, by = .2))) +
   scale_y_continuous(breaks = c(seq(24, 25, by = .2))) +
 theme_bw() +
@@ -131,67 +126,6 @@ ggsave("../figures/figure1.eps", plot = outplantMap, width = 16, height = 16, un
 
 
 
-# Main theme
-# theme_bw() +
-#   theme(panel.background = element_rect(fill = "aliceblue"),
-#         panel.border = element_rect(color = "black", size = 0.75, fill = NA),
-#         plot.background = element_blank(),
-#         axis.title = element_blank(),
-#         axis.ticks = element_line(color = "black"),
-#         axis.text = element_text(color = "black"),
-#         legend.position = "bottom",
-#         legend.direction = "vertical",
-#         legend.box = "horizontal")
-
-
-
-
-zReef = noaaSites +
-  annotation_scale(location = "br") +
-  coord_sf(xlim = c(-81.502520, -81.494495), ylim = c(24.524996, 24.530332)) +
-  scale_x_continuous(breaks = c(seq(-81.50, -81.49, by = .01))) +
-  scale_y_continuous(breaks = c(seq(24.52,  24.531, by = .01))) +
-  theme_bw() +
-  theme(legend.title = element_text(size = 9, face = "bold"),
-        axis.ticks = element_blank(),
-        axis.text = element_blank(),
-        axis.title = element_blank(),
-        panel.background = element_rect(fill = "aliceblue"),
-        panel.border = element_rect(color = "black", size = 0.75, fill = NA),
-        legend.text = element_text(size = 9),
-        legend.position = "none",
-        plot.background = element_blank())
-
-cReef = noaaSites +
-  annotation_scale(location = "br") +
-  coord_sf(xlim = c(-81.491366, -81.479634), ylim = c(24.527698, 24.536844)) +
-  scale_x_continuous(breaks = c(seq(-81.49, -81.47, by = .01))) +
-  scale_y_continuous(breaks = c(seq(24.52,  24.54, by = .01))) +
-  theme_bw() +
-  theme(legend.title = element_text(size = 9, face = "bold"),
-        axis.ticks = element_blank(),
-        axis.text = element_blank(),
-        axis.title = element_blank(),
-        panel.background = element_rect(fill = "aliceblue"),
-        panel.border = element_rect(color = "black", size = 0.75, fill = NA),
-        legend.text = element_text(size = 9),
-        legend.position = "none",
-        plot.background = element_blank())
-uReef = noaaSites +
-  annotation_scale(location = "br") +
-  coord_sf(xlim = c(-81.450888, -81.437326), ylim = c(24.537522, 24.545171)) +
-  scale_x_continuous(breaks = c(seq(-81.45, -81.43, by = .01))) +
-  scale_y_continuous(breaks = c(seq(24.53,  24.55, by = .01))) +
-  theme_bw() +
-  theme(legend.title = element_text(size = 9, face = "bold"),
-        axis.ticks = element_blank(),
-        axis.text = element_blank(),
-        axis.title = element_blank(),
-        panel.background = element_rect(fill = "aliceblue"),
-        panel.border = element_rect(color = "black", size = 0.75, fill = NA),
-        legend.text = element_text(size = 9),
-        legend.position = "none",
-        plot.background = element_blank())
 
 
 ```
