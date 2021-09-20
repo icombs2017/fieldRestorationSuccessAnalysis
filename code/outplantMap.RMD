@@ -70,7 +70,7 @@ tortugasBathy = read_sf("../data/shp/tortugasBathy.shp") %>% st_transform(crs = 
 ```
 <br>
 
-Next we build a hi-res polygon of FL with the outplant sites marked. We use `ggspatial` to add a north arrow and scale bar to the main map. We are changing
+Next we build a hi-res polygon of FL with the outplant sites marked. We use `ggspatial` to add a north arrow and scale bar to the main map. 
 
 ```{r, maps}
 flPal = paletteer_d("vapoRwave::jazzCup")[c(2:5)]
