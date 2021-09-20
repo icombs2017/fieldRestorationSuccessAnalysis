@@ -47,7 +47,7 @@ pacman::p_load_gh("ropensci/rnaturalearthhires")
 ```
 <br>
 
-# Map of study sites
+# Here we are loading the Lat/Long data in from our Metadata spreadsheet as well as loading in layers from our shapefiles in our data folder. We are changing the Lat/Long data (`sites$Lat_Y` and `sites$Long_X`) from a character class to a numeric class. 
 
 <br>
 
@@ -70,7 +70,8 @@ tortugasBathy = read_sf("../data/shp/tortugasBathy.shp") %>% st_transform(crs = 
 ```
 <br>
 
-Next we build a hi-res polygon of FL with the study site marked and a zoomed in map of the colony locations. We use `ggspatial` to add a north arrow and scale bar to the main map.
+Next we build a hi-res polygon of FL with the outplant sites marked. We use `ggspatial` to add a north arrow and scale bar to the main map. We are changing
+
 ```{r, maps}
 flPal = paletteer_d("vapoRwave::jazzCup")[c(2:5)]
 boundPal = c("gray30", paletteer_d("vapoRwave::vapoRwave")[10])
@@ -122,7 +123,6 @@ outplantMap = ggdraw() +
   
 ggsave("../figures/figure1.png", plot = outplantMap, width = 16, height = 16, units = "cm", dpi = 600)
 
-ggsave("../figures/figure1.eps", plot = outplantMap, width = 16, height = 16, units = "cm", dpi = 600)
 
 
 
