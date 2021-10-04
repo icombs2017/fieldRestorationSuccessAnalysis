@@ -129,5 +129,85 @@ ggsave("../figures/figure1.png", plot = outplantMap, width = 16, height = 16, un
 
 
 ```
+
 ![](../figures/figure1.png)
 <br>
+
+## Incorporating dataset into map and trying to figure out the discrepencies in the Lat/Long data
+
+```{r, testMap}
+testSite = read_csv("../data/FINAL_acer_data_full_07_07_2021.csv")
+
+
+mainKeys <- ggplot() +
+  geom_sf(data = flKeys$geometry, fill = "white", color = "gray30") +
+  geom_sf(data = fknmsBounds, fill = "black", alpha = 0.1) +
+  geom_sf(data = bathy$geometry, color = "gray75", size = 0.25) +
+  coord_sf(xlim = c(-81.994327, -81.284336), ylim = c(24.399133,  24.701425)) +
+  geom_point(data = sites, aes(x = Long_X, y = Lat_Y), shape = 21, color = "black", fill = "#FB6467FF",size = 2) +
+  geom_point(data = testSite, aes(x = long, y = lat), shape = 21, color = 'black', fill = 'green', size = 2)+
+  annotation_scale(location = "bl") +
+  annotation_north_arrow(location = "br", which_north = "true", style = north_arrow_minimal()) +
+  scale_x_continuous(breaks = c(seq(-82, -80, by = .2))) +
+  scale_y_continuous(breaks = c(seq(24, 25, by = .2))) +
+theme_bw() +
+  theme(panel.background = element_rect(fill = "aliceblue"),
+        panel.border = element_rect(color = "black", size = 0.75, fill = NA),
+        plot.background = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_line(color = "black"),
+        axis.text = element_text(color = "black"),
+        legend.position = "bottom",
+        legend.direction = "vertical",
+        legend.box = "horizontal",
+        legend.title = element_blank())+
+  rremove('legend')
+
+
+
+
+```
+
+
+```{r}
+#Selecting the site, lat, and long data from the testSite dataset
+
+testSiteTrunc <- testSite %>% select(site, lat, long)
+
+# Doing the same for the sites dataset and renaming Site_ID to site so it will 
+# match the previous dataset
+sitesTrunc <- sites %>% select(Site_ID, Lat_Y, Long_X) %>% rename(site = Site_ID)
+#The sites data set has the sites delimited with underscores and the testSite 
+# dataset has sites delimited with hyphens, so I am finding and replacing all 
+# of the underscores in the sites dataset with hyphens using the function 'gsub'
+sitesTrunc$site <- gsub("_","-",sitesTrunc$site)
+sitesTrunc$site <- gsub("a","A", sitesTrunc$site)
+sitesTrunc$site <- as.factor(sitesTrunc$site)
+
+#Finally combining the datasets using the function full_join() within dplyr
+coordFull <- full_join(testSiteTrunc, sitesTrunc, by = "site")
+coordLeft <- left_join(testSiteTrunc, sitesTrunc, by = "site")
+summary(latcomp <- coord$lat == coord$Lat_Y)
+summary(longcomp <- coord$long == coord$Long_X)
+
+coord$diffLat <- coord$lat - coord$Lat_Y
+
+coord$diffLong <- abs(coord$long - coord$Long_X)
+
+mean(coord$diffLat, na.rm = TRUE)
+mean(coord$diffLong, na.rm = TRUE)
+
+
+length(coordFull$Lat_Y)
+length(coordLeft$Lat_Y)
+length(testSiteTrunc$lat)
+
+coordNA <- coordFull[rowSums(is.na(coordFull)) > 0,]
+
+
+```
+
+
+
+
+
