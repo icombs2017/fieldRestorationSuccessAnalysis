@@ -137,6 +137,7 @@ ggsave("../figures/figure1.png", plot = outplantMap, width = 16, height = 16, un
 
 ```{r, testMap}
 testSite = read_csv("../data/FINAL_acer_data_full_07_07_2021.csv")
+testSite$site <- as.factor(testSite$site)
 
 
 mainKeys <- ggplot() +
@@ -187,15 +188,15 @@ sitesTrunc$site <- as.factor(sitesTrunc$site)
 #Finally combining the datasets using the function full_join() within dplyr
 coordFull <- full_join(testSiteTrunc, sitesTrunc, by = "site")
 coordLeft <- left_join(testSiteTrunc, sitesTrunc, by = "site")
-summary(latcomp <- coord$lat == coord$Lat_Y)
-summary(longcomp <- coord$long == coord$Long_X)
+summary(latcomp <- coordFull$lat == coordFull$Lat_Y)
+summary(longcomp <- coordFull$long == coordFull$Long_X)
 
-coord$diffLat <- coord$lat - coord$Lat_Y
+coordFull$diffLat <- coordFull$lat - coordFull$Lat_Y
 
-coord$diffLong <- abs(coord$long - coord$Long_X)
+coordFull$diffLong <- coordFull$long - coordFull$Long_X
 
-mean(coord$diffLat, na.rm = TRUE)
-mean(coord$diffLong, na.rm = TRUE)
+mean(coordFull$diffLat, na.rm = TRUE)
+mean(coordFull$diffLong, na.rm = TRUE)
 
 
 length(coordFull$Lat_Y)
@@ -208,6 +209,21 @@ coordNA <- coordFull[rowSums(is.na(coordFull)) > 0,]
 ```
 
 
+```{r}
+
+
+testSiteTrunc
+
+
+
+rep <- full_join(testSiteTrunc, sitesTrunc, by = "site")
+repFilter <- rep %>% select(site, lat, long, Lat_Y, Long_X) %>% filter(lat == Lat_Y)
+
+repLeft <- left_join(testSiteTrunc, sitesTrunc, by = 'site')
+
+
+
+```
 
 
 
