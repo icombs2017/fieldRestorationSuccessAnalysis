@@ -52,7 +52,7 @@ pacman::p_load_gh("ropensci/rnaturalearthhires")
 <br>
 
 ```{r, map data}
-sites = read_excel("../data/outplantMetadata.xlsx")
+sites = read.csv("../data/FINAL_acer_data_full_07_07_2021_FIXED.csv")
 sites$General_Location <- as.factor(sites$General_Location)
 sites$Site_ID <- as.factor(sites$Site_ID)
 sites$Lat_Y <- as.numeric(sites$Lat_Y)

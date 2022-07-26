@@ -210,7 +210,7 @@ length(unique(fixedSites$site))
 
 
 ```
-Now checking to see if it worked adn the coordinates are correct, going to plot it over our old map.
+Now checking to see if it worked... and the coordinates are correct! Going to plot it over our old map.
 ```{r}
 
 
